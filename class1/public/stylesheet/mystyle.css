@@ -1,0 +1,14 @@
+h1{
+    color: turquoise;
+}
+
+[group=bg]{
+    background-color: blue;
+}
+
+.h1style{
+    text-align: center;
+    background-color: brown;
+    padding: 50px;
+    margin-left: 20%;
+}
