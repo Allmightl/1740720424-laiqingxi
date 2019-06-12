@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<meta charset="UTF-8">
+<meta name="index" content="HanRui">
+<meta name="ATT" content="javascript">
+<title>ATT卡牌界面</title>
+<style>
+</style>
+ <!-- padding:内边界  margin:外边界    -->
+<head>
+    <h1  style="text-align: center;
+                background-color: brown;
+                padding-left: 50px;
+                margin-top: 0%;
+                margin-left:20%;
+                margin-right:20%;
+                border-color: blue;
+                border-width: 20px;  
+                " >大爷进来玩啊</h1>
+</head>
+<body>
+
+    <div style="width:100% ;height:340px ;background-color:bisque(255, 180, 90); ">
+        <div style="width:50%; height:300px ;background-color:blanchedalmond(140, 242, 255); float:left;">
+            <p>左边的记分牌</p>
+            <table id="tab1"  border="1px"  style="width:60%; background-color: cadetblue">
+                <tr>
+                   <td >五条</td>
+                   <td id="bonus_0">750</td>
+               </tr>
+               <tr>
+                    <td>皇家大顺</td>
+                    <td id="bonus_1" >250</td>
+                </tr>
+                <tr>
+                        <td>同花顺</td>
+                        <td id="bonus_2" >150</td>
+                </tr>
+                <tr>
+                    <td>Full Hoose</td>
+                    <td id="bonus_3" >100</td>
+                </tr>
+                <tr>
+                        <td>四条</td>
+                        <td id="bonus_4" >60</td>
+                </tr>
+                <tr>
+                        <td>三条</td>
+                        <td id="bonus_5" >10</td>
+                </tr>
+                <tr>
+                        <td>两对</td>
+                        <td id="bonus_6" >5</td>
+               </tr>
+               <tr>
+                        <td>一对</td>
+                        <td id="bonus_7" >1</td>
+               </tr>
+            </table>
+            <table id="tab2" border="2px" style="width:60%; background-color: cadetblue">
+                 <tr>
+                     <td>总分</td>
+                     <td  id="total_score">10000</td>
+                 </tr>
+                 <tr>
+                    <td>押分</td>
+                    <td  id="pour_score">0</td>
+                 </tr>
+
+                
+            </table>
+        </div>
+        
+        <div style="width:50%; height:300px ;background-color:blanchedalmond(0, 180, 90); float:right;">
+            <p id="right_result">右边的记分牌</p>
+            <table id="tab1"  border="1px"  style="width:50%;background-color: tomato">
+                    <tr>
+                       <td>五条</td>
+                       <td id="pokers_0">750</td>
+                   </tr>
+                   <tr>
+                        <td>皇家大顺</td>
+                        <td id="pokers_1" >250</td>
+                    </tr>
+                    <tr>
+                            <td>同花顺</td>
+                            <td id="pokers_2" >150</td>
+                    </tr>
+                    <tr>
+                            <td>Full Hoose</td>
+                            <td id="pokers_3" >100</td>
+                    </tr>
+                    <tr>
+                            <td>四条</td>
+                            <td id="pokers_4" >60</td>
+                    </tr>
+                    <tr>
+                          <td>三条</td>
+                          <td id="pokers_5" >10</td>
+                    </tr>
+                    <tr>
+                          <td>两对</td>
+                          <td id="pokers_6" >5</td>
+                    </tr>
+                    <tr>
+                          <td>一对</td>
+                          <td id="pokers_7" >1</td>
+                     </tr>
+                </table>
+        </div>
+    </div>
+
+    <div style="width: 100% ;height:260px; ">
+            <img id='card_0' width="12%"  src="./Public/img/timg.jpg">
+            <img id='card_1' width="12%"  src="./Public/img/timg.jpg">
+            <img id='card_2' width="12%"  src="./Public/img/timg.jpg">
+            <img id='card_3' width="12%"  src="./Public/img/timg.jpg">
+            <img id='card_4' width="12%"  src="./Public/img/timg.jpg">
+            
+
+    </div>
+   
+
+    <div style="width: 100% ;height:150px; background-color:yellow;text-align: center;">
+        <p>这是控制台</p>
+        <input  id="pour_input" type="text" name="pour" style="width:5%" ></input>
+        <button id="plus" style="width:5%;">+100</button>
+        <button id="minus" style="width:5%;">-100</button>
+        <button id="start" onclick="onclickrandom() " style="width:5%;"    >开始</button>
+        <button onclick="onClockReset()"   style="width:5%;" >重置</button>
+       
+    </div>
+
+    <!--引入jq-->
+    <script src="./javascript/jquery-3.3.1.min.js"></script>
+
+   
+    
+   <script>
+
+        const cardImages = [];//存放图片id的数组
+        const keep = [];//存放需要保存的牌的数组
+        for(let i = 0;i < 5;i ++){
+            const card = $(`#card_${i}`);
+            cardImages.push(card);
+        }
+       
+        const bonusText = [];//存放不同组合的倍率的数组
+        for(let i = 0; i< 9; i++){
+            bonusText.push($('#bonus_' + i));
+        }
+       
+        const pokersText = [];//存放下注后对应组合可获得的分数的数组
+        for(let i = 0; i< 9; i++){
+           pokersText.push($('#pokers_' + i));
+        }
+        
+        const pokersRate = [   //存放分数的数组 
+            750, 250 , 150, 100, 60, 10, 5, 1
+        ];
+
+        const totalText = $('#total_score'); //获取显示总分的格子的id
+        const pourText = $('#pour_score');//获取押分格子的id
+
+        const pourInput = $('#pour_input');//获取显示下注分数格子的id
+        const plusBtn = $('#plus');//获取增加下注格子的id
+        const minusBtn = $('#minus');//获取减少下注格子的id
+        const startBtn = $('start');//获取开始游戏按钮的id
+        
+        let pourScore = 0;
+        let pournum = 10000;
+        plusBtn.on('click',() => {
+            pourScore += 100;
+            pournum -= 100;
+            pourInput.val(pourScore);
+             pourText.text(pourScore);
+             totalText.text(pournum);
+            updateDisplay(pourScore);
+            
+        })
+        
+        let gameStart = false; 
+
+        minusBtn.on('click',() => {
+            
+            pournum +=100;
+            pourScore -= 100;
+            if(pourScore < 0){
+                pourScore = 0;
+            }
+            pourInput.val(pourScore);
+             pourText.text(pourScore);
+             totalText.text(pournum);
+            updateDisplay(pourScore);
+            
+        })
+        
+        
+        let updateDisplay = score => {
+            for(let i =0 ; i < pokersRate.length; i++){
+                const td = pokersText[i];
+                const rate = pokersRate[i];
+                td.text(score * rate);
+            }
+        }
+        
+        
+        
+        
+        
+        //随机出牌的函数
+        function onclickrandom(){
+            $.post('/pour',{
+                coin:pourScore,
+                start:gameStart
+            })
+           $.get('/random',{
+                keepcard:keep,
+                pourCoin:pourScore,
+                length:keep.length,
+           },function (res){
+               let cards = res.cards;
+               console.log('----res:',res);
+
+               for(let i = 0; i < cards.length ; i++){
+                   const card = cards[i];
+                   const url = `./Public/img/${card._type}/${card._value}.png`;
+                   $(`#card_${i}`).attr('src',url);
+               }
+
+               $(`#right_result`).text(res.result);
+               totalText.text(res.gameCoin); 
+           })
+           
+       }
+
+ 
+       let onClockReset = () =>{
+           for (let i = 0; i < 5; i++){
+               $(`#card_${i}`).attr('src',`./cardimg/carding/timg.jpg`);
+           }
+       }
+   </script>
+
+    
+</body>
+</head>
